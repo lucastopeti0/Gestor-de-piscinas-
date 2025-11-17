@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESTE - GestorPool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0057ff;
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .error {
+            background: #dc3545;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎉 GESTORPOOL FUNCIONANDO!</h1>
+    
+    <div class="success">
+        <h2>✅ Status: OK</h2>
+        <p>GitHub Pages está funcionando!</p>
+        <p>URL atual: <strong id="current-url"></strong></p>
+        <p>Hora: <span id="current-time"></span></p>
+    </div>
+    
+    <h3>Se você vê esta página, o problema NÃO é o GitHub Pages</h3>
+    <p>O problema pode ser:</p>
+    <ul style="text-align: left; display: inline-block;">
+        <li>Arquivo Index.html não foi enviado corretamente</li>
+        <li>GitHub ainda está processando (pode levar até 10 minutos)</li>
+        <li>Branch configurada incorretamente</li>
+    </ul>
+
+    <script>
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('current-time').textContent = new Date().toLocaleString('pt-BR');
+        
+        // Verificar se está no domínio correto
+        setTimeout(() => {
+            if (window.location.hostname.includes('github.io')) {
+                console.log('✅ GitHub Pages ativado com sucesso!');
+            } else {
+                console.log('❌ Não está no domínio GitHub Pages');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
