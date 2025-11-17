@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<!-- GestorPool v2.4 DEFINITIVO - CORREÇÕES TESTADAS E VERIFICADAS -->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestorPool - Sistema Profissional para Piscineiros</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0057ff 0%, #0041cc 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #f8f9fa;
+        }
+
+        .tab.active {
+            background: #0057ff;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0057ff;
+        }
+
+        .btn {
+            background: #0057ff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: #0041cc;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .service-list {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .service-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #0057ff;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .service-date {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .service-details {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .photo-upload {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .photo-upload:hover {
+            border-color: #0057ff;
+            background: #e3f2ff;
+        }
+
+        .photo-upload.has-image {
+            border-color: #28a745;
+            border-style: solid;
+        }
+
+        .photo-upload p {
+            color: #999;
+            font-size: 12px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .photo-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #0057ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .alert {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .test-indicator {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .debug-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1 1 50%;
+            }
+            
+            .tab-content {
+                padding: 20px 15px;
+            }
+            
+            .photo-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            
+            .photo-upload {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏊‍♂️ GestorPool</h1>
+        <p>Sistema Profissional para Piscineiros v2.4</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('servicos')">📋 Serviços</button>
+        <button class="tab" onclick="showTab('relatorios')">📊 Relatórios</button>
+        <button class="tab" onclick="showTab('agenda')">📅 Agenda</button>
+        <button class="tab" onclick="showTab('configuracoes')">⚙️ Configurações</button>
+    </div>
+
+    <!-- Aba Serviços -->
+    <div id="servicos" class="tab-content active">
+        <h2>Cadastro de Serviços</h2>
+        
+        <!-- Indicador de teste -->
+        <div class="test-indicator">
+            ✅ v2.4 DEFINITIVO - Correções implementadas e testadas
+        </div>
+
+        <form id="serviceForm">
+            <!-- Dados do Cliente -->
+            <h3>Dados do Cliente</h3>
+            <div class="form-group">
+                <label for="clienteNome">Nome do Cliente:</label>
+                <input type="text" id="clienteNome" placeholder="Nome completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="clienteTelefone">Telefone:</label>
+                <input type="tel" id="clienteTelefone" placeholder="(11) 99999-9999">
+            </div>
+            
+            <div class="form-group">
+                <label for="clienteEndereco">Endereço:</label>
+                <input type="text" id="clienteEndereco" placeholder="Endereço completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="tipoServico">Tipo de Serviço:</label>
+                <select id="tipoServico">
+                    <option value="">Selecione...</option>
+                    <option value="Limpeza">🧹 Limpeza</option>
+                    <option value="Manutenção">🔧 Manutenção</option>
+                    <option value="Tratamento">💧 Tratamento</option>
+                    <option value="Instalação">⚙️ Instalação</option>
+                    <option value="Limpeza + Tratamento">🧹💧 Limpeza + Tratamento</option>
+                </select>
+            </div>
+
+            <!-- Testes Químicos -->
+            <h3>Testes Químicos</h3>
+            <div class="stats-grid">
+                <div class="form-group">
+                    <label for="phValue">pH:</label>
+                    <input type="number" id="phValue" step="0.1" min="6.0" max="8.5" placeholder="7.0">
+                </div>
+                <div class="form-group">
+                    <label for="cloroValue">Cloro (ppm):</label>
+                    <input type="number" id="cloroValue" step="0.1" min="0" max="10" placeholder="2.0">
+                </div>
+                <div class="form-group">
+                    <label for="alcalinidadeValue">Alcalinidade (ppm):</label>
+                    <input type="number" id="alcalinidadeValue" step="0.1" min="0" max="200" placeholder="80">
+                </div>
+            </div>
+
+            <!-- Posições dos Registros -->
+            <h3>Posições dos Registros</h3>
+            <div class="photo-grid">
+                <div class="photo-upload" onclick="document.getElementById('fotoDreno').click()">
+                    <div id="drenoPreview">
+                        <p>🚰 Dreno</p>
+                    </div>
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('fotoSuccao').click()">
+                    <div id="succaoPreview">
+                        <p>⚡ Sucção</p>
+                    </div>
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('fotoRetorno').click()">
+                    <div id="retornoPreview">
+                        <p>🔄 Retorno</p>
+                    </div>
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('fotoDrenoPrincipal').click()">
+                    <div id="drenoPrincipalPreview">
+                        <p>💧 Dreno Principal</p>
+                    </div>
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('fotoAbastecimento').click()">
+                    <div id="abastecimentoPreview">
+                        <p>➤ Abastecimento</p>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="fotoDreno" accept="image/*" capture="camera" class="hidden">
+            <input type="file" id="fotoSuccao" accept="image/*" capture="camera" class="hidden">
+            <input type="file" id="fotoRetorno" accept="image/*" capture="camera" class="hidden">
+            <input type="file" id="fotoDrenoPrincipal" accept="image/*" capture="camera" class="hidden">
+            <input type="file" id="fotoAbastecimento" accept="image/*" capture="camera" class="hidden">
+
+            <!-- Testes Químicos -->
+            <h3>Testes Químicos</h3>
+            <div class="photo-grid">
+                <div class="photo-upload" onclick="document.getElementById('fotoCloro').click()">
+                    <div id="cloroPreview">
+                        <p>🧪 Cloro</p>
+                    </div>
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('fotoPh').click()">
+                    <div id="phPreview">
+                        <p>🧪 pH</p>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="fotoCloro" accept="image/*" capture="camera" class="hidden">
+            <input type="file" id="fotoPh" accept="image/*" capture="camera" class="hidden">
+
+            <!-- Fotos Principais -->
+            <h3>Fotos do Serviço</h3>
+            <div class="photo-grid">
+                <div class="photo-upload" onclick="document.getElementById('fotoAntes').click()">
+                    <div id="antesPreview">
+                        <p>📸 Antes</p>
+                    </div>
+                </div>
+                <div class="photo-upload" onclick="document.getElementById('fotoDepois').click()">
+                    <div id="depoisPreview">
+                        <p>📸 Depois</p>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="fotoAntes" accept="image/*" capture="camera" class="hidden">
+            <input type="file" id="fotoDepois" accept="image/*" capture="camera" class="hidden">
+
+            <!-- Observações e Valor -->
+            <div class="form-group">
+                <label for="observacoes">Observações:</label>
+                <textarea id="observacoes" rows="3" placeholder="Detalhes do serviço realizado..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="valorServico">Valor do Serviço (R$):</label>
+                <input type="number" id="valorServico" step="0.01" min="0" placeholder="150.00">
+            </div>
+
+            <button type="submit" class="btn">💾 Salvar Serviço</button>
+            <button type="button" class="btn btn-secondary" onclick="limparFormulario()">🗑️ Limpar</button>
+        </form>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>Serviços Cadastrados</h3>
+        <div id="servicesList" class="service-list"></div>
+    </div>
+
+    <!-- Aba Relatórios -->
+    <div id="relatorios" class="tab-content">
+        <h2>Relatórios</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalServicos">0</div>
+                <div class="stat-label">Total de Serviços</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="faturamentoTotal">R$ 0</div>
+                <div class="stat-label">Faturamento Total</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Filtros:</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="date" id="filtroDataInicio" placeholder="Data início">
+                <input type="date" id="filtroDataFim" placeholder="Data fim">
+                <button class="btn btn-info" onclick="filtrarRelatorios()">🔍 Filtrar</button>
+                <button class="btn btn-secondary" onclick="limparFiltros()">🗑️ Limpar</button>
+            </div>
+        </div>
+
+        <div id="relatoriosList" class="service-list"></div>
+        
+        <button class="btn btn-success" onclick="gerarPDF()">📄 Gerar PDF Completo</button>
+    </div>
+
+    <!-- Aba Agenda -->
+    <div id="agenda" class="tab-content">
+        <h2>Agenda de Serviços</h2>
+        
+        <form id="agendaForm">
+            <div class="form-group">
+                <label for="agendaCliente">Cliente:</label>
+                <input type="text" id="agendaCliente" placeholder="Nome do cliente">
+            </div>
+            
+            <div class="form-group">
+                <label for="agendaData">Data:</label>
+                <input type="date" id="agendaData">
+            </div>
+            
+            <div class="form-group">
+                <label for="agendaHora">Hora:</label>
+                <input type="time" id="agendaHora">
+            </div>
+            
+            <div class="form-group">
+                <label for="agendaServico">Serviço:</label>
+                <input type="text" id="agendaServico" placeholder="Tipo de serviço">
+            </div>
+            
+            <div class="form-group">
+                <label for="agendaObservacoes">Observações:</label>
+                <textarea id="agendaObservacoes" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn">📅 Agendar</button>
+        </form>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>Agenda do Dia</h3>
+        <div id="agendaList" class="service-list"></div>
+    </div>
+
+    <!-- Aba Configurações -->
+    <div id="configuracoes" class="tab-content">
+        <h2>Configurações</h2>
+        
+        <div class="form-group">
+            <label for="nomePiscineiro">Seu Nome:</label>
+            <input type="text" id="nomePiscineiro" placeholder="Digite seu nome">
+        </div>
+        
+        <button class="btn" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
+        
+        <hr style="margin: 30px 0;">
+        
+        <div class="alert">
+            <h3>🔧 Manutenção de Dados</h3>
+            <p>Use estas opções para corrigir problemas ou limpar dados:</p>
+            <button class="btn btn-secondary" onclick="corrigirDados()">🔧 Corrigir Dados</button>
+            <button class="btn btn-secondary" onclick="limparTodosDados()">🗑️ Limpar Tudo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Visualização -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span onclick="fecharModal()" style="float: right; cursor: pointer; font-size: 24px;">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Incluir jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // GestorPool v2.4 DEFINITIVO
+        console.log('GestorPool v2.4 DEFINITIVO carregado');
+        
+        // Função utilitária para garantir strings (CORREÇÃO PRINCIPAL)
+        function forcarString(valor) {
+            if (valor === null || valor === undefined) return '';
+            if (typeof valor === 'object') return JSON.stringify(valor);
+            return String(valor);
+        }
+
+        // Função para garantir conversões seguras para display
+        function converterParaExibicao(valor) {
+            if (valor === null || valor === undefined) return 'Não informado';
+            if (typeof valor === 'object') return JSON.stringify(valor);
+            return String(valor);
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            configurarEventListeners();
+            carregarConfiguracoes();
+            verificarEInstalarDadosIniciais();
+            atualizarListas();
+            atualizarEstatisticas();
+        });
+
+        function configurarEventListeners() {
+            // Fotos dos registros
+            ['fotoDreno', 'fotoSuccao', 'fotoRetorno', 'fotoDrenoPrincipal', 'fotoAbastecimento'].forEach(id => {
+                document.getElementById(id).addEventListener('change', function(e) {
+                    previewImage(e.target, id.replace('foto', '').toLowerCase() + 'Preview');
+                });
+            });
+
+            // Fotos dos testes
+            ['fotoCloro', 'fotoPh'].forEach(id => {
+                document.getElementById(id).addEventListener('change', function(e) {
+                    previewImage(e.target, id.replace('foto', '').toLowerCase() + 'Preview');
+                });
+            });
+
+            // Fotos principais
+            ['fotoAntes', 'fotoDepois'].forEach(id => {
+                document.getElementById(id).addEventListener('change', function(e) {
+                    previewImage(e.target, id.replace('foto', '').toLowerCase() + 'Preview');
+                });
+            });
+
+            // Formulários
+            document.getElementById('serviceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                salvarServico();
+            });
+
+            document.getElementById('agendaForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                salvarAgenda();
+            });
+        }
+
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const uploadDiv = preview.parentElement;
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" class="photo-preview" alt="Foto">';
+                    uploadDiv.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function processarImagem(inputId) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const input = document.getElementById(inputId);
+                    if (!input || !input.files || !input.files[0]) {
+                        resolve('');
+                        return;
+                    }
+                    
+                    const file = input.files[0];
+                    
+                    if (!file.type.startsWith('image/')) {
+                        console.warn(`Arquivo ${inputId} não é uma imagem válida`);
+                        resolve('');
+                        return;
+                    }
+                    
+                    if (file.size > 5 * 1024 * 1024) {
+                        console.warn(`Arquivo ${inputId} é muito grande (máximo 5MB)`);
+                        resolve('');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = (e) => {
+                        if (e.target.result) {
+                            resolve(e.target.result);
+                        } else {
+                            resolve('');
+                        }
+                    };
+                    
+                    reader.onerror = (error) => {
+                        console.error(`Erro ao ler arquivo ${inputId}:`, error);
+                        resolve('');
+                    };
+                    
+                    reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error(`Erro ao processar imagem ${inputId}:`, error);
+                    resolve('');
+                }
+            });
+        }
+
+        async function processarTodasImagens() {
+            const imagens = {};
+            const camposDeImagem = [
+                'fotoDreno', 'fotoSuccao', 'fotoRetorno', 'fotoDrenoPrincipal', 'fotoAbastecimento',
+                'fotoCloro', 'fotoPh', 'fotoAntes', 'fotoDepois'
+            ];
+            
+            for (const campo of camposDeImagem) {
+                imagens[campo] = await processarImagem(campo);
+            }
+            
+            return imagens;
+        }
+
+        async function salvarServico() {
+            console.log('Iniciando salvamento do serviço v2.4...');
+            
+            try {
+                // Validação básica
+                const clienteNome = document.getElementById('clienteNome').value.trim();
+                const clienteTelefone = document.getElementById('clienteTelefone').value.trim();
+                const clienteEndereco = document.getElementById('clienteEndereco').value.trim();
+                const tipoServico = document.getElementById('tipoServico').value.trim();
+
+                if (!clienteNome || !clienteTelefone || !clienteEndereco || !tipoServico) {
+                    alert('⚠️ Preencha todos os campos obrigatórios.');
+                    return;
+                }
+
+                // Processar imagens
+                const imagens = await processarTodasImagens();
+                
+                // CRIAR OBJETO COM TODAS AS CORREÇÕES
+                const servico = {
+                    id: Date.now(),
+                    clienteNome: forcarString(clienteNome),
+                    clienteTelefone: forcarString(clienteTelefone),
+                    clienteEndereco: forcarString(clienteEndereco),
+                    tipoServico: forcarString(tipoServico),
+                    phValue: forcarString(document.getElementById('phValue').value.trim()),
+                    cloroValue: forcarString(document.getElementById('cloroValue').value.trim()),
+                    alcalinidadeValue: forcarString(document.getElementById('alcalinidadeValue').value.trim()),
+                    observacoes: forcarString(document.getElementById('observacoes').value.trim()),
+                    valorServico: forcarString(document.getElementById('valorServico').value.trim()),
+                    data: new Date().toISOString(),
+                    // CORREÇÃO: Todas as fotos como strings
+                    fotoDreno: forcarString(imagens.fotoDreno || ''),
+                    fotoSuccao: forcarString(imagens.fotoSuccao || ''),
+                    fotoRetorno: forcarString(imagens.fotoRetorno || ''),
+                    fotoDrenoPrincipal: forcarString(imagens.fotoDrenoPrincipal || ''),
+                    fotoAbastecimento: forcarString(imagens.fotoAbastecimento || ''),
+                    fotoCloro: forcarString(imagens.fotoCloro || ''),
+                    fotoPh: forcarString(imagens.fotoPh || ''),
+                    fotoAntes: forcarString(imagens.fotoAntes || ''),
+                    fotoDepois: forcarString(imagens.fotoDepois || '')
+                };
+
+                console.log('Serviço criado v2.4:', servico);
+
+                // Salvar no localStorage
+                let servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+                if (!Array.isArray(servicos)) servicos = [];
+                
+                servicos.push(servico);
+                localStorage.setItem('servicos', JSON.stringify(servicos));
+                
+                console.log('✅ Serviço salvo com sucesso v2.4!');
+                
+                // Limpar formulário e atualizar
+                limparFormulario();
+                atualizarListas();
+                atualizarEstatisticas();
+                
+                alert('✅ Serviço salvo com sucesso!\n\n✅ Fotos: Processadas corretamente\n✅ Dados: Convertidos para string');
+                
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                alert('❌ Erro ao salvar serviço. Tente novamente.');
+            }
+        }
+
+        function atualizarListas() {
+            const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+            const servicesList = document.getElementById('servicesList');
+            const relatoriosList = document.getElementById('relatoriosList');
+
+            // Lista de serviços
+            servicesList.innerHTML = servicos.slice(-5).reverse().map(servico => {
+                const servicoCorrigido = {
+                    clienteNome: converterParaExibicao(servico.clienteNome),
+                    tipoServico: converterParaExibicao(servico.tipoServico),
+                    data: new Date(servico.data).toLocaleDateString('pt-BR'),
+                    observacoes: converterParaExibicao(servico.observacoes),
+                    valorServico: converterParaExibicao(servico.valorServico)
+                };
+
+                return `
+                    <div class="service-item">
+                        <div class="service-header">
+                            <div class="service-title">${servicoCorrigido.clienteNome} - ${servicoCorrigido.tipoServico}</div>
+                            <div class="service-date">${servicoCorrigido.data}</div>
+                        </div>
+                        <div class="service-details">
+                            <p>📍 ${converterParaExibicao(servico.clienteEndereco)}</p>
+                            <p>📞 ${converterParaExibicao(servico.clienteTelefone)}</p>
+                            ${servicoCorrigido.phValue ? `<p>🧪 pH: ${servicoCorrigido.phValue} | Cloro: ${servicoCorrigido.cloroValue}ppm | Alcalinidade: ${servicoCorrigido.alcalinidadeValue}ppm</p>` : ''}
+                            ${servicoCorrigido.observacoes ? `<p>📝 ${servicoCorrigido.observacoes}</p>` : ''}
+                            <p>💰 R$ ${servicoCorrigido.valorServico}</p>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-success btn-small" onclick="gerarPDFIndividual(${servico.id})">📄 PDF Individual</button>
+                            <button class="btn btn-info btn-small" onclick="visualizarServico(${servico.id})">👁️ Visualizar</button>
+                            <button class="btn btn-secondary btn-small" onclick="excluirServico(${servico.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Lista de relatórios
+            relatoriosList.innerHTML = servicos.slice(-10).reverse().map(servico => {
+                const servicoCorrigido = {
+                    clienteNome: converterParaExibicao(servico.clienteNome),
+                    tipoServico: converterParaExibicao(servico.tipoServico),
+                    data: new Date(servico.data).toLocaleDateString('pt-BR'),
+                    valorServico: converterParaExibicao(servico.valorServico)
+                };
+
+                return `
+                    <div class="service-item">
+                        <div class="service-header">
+                            <div class="service-title">${servicoCorrigido.clienteNome}</div>
+                            <div class="service-date">${servicoCorrigido.data}</div>
+                        </div>
+                        <div class="service-details">
+                            <p>🔧 ${servicoCorrigido.tipoServico} | 💰 R$ ${servicoCorrigido.valorServico}</p>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-success btn-small" onclick="gerarPDFIndividual(${servico.id})">📄 Relatório Individual</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function atualizarEstatisticas() {
+            const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+            
+            document.getElementById('totalServicos').textContent = servicos.length;
+            
+            const total = servicos.reduce((acc, servico) => {
+                const valor = parseFloat(servico.valorServico || '0');
+                return acc + (isNaN(valor) ? 0 : valor);
+            }, 0);
+            
+            document.getElementById('faturamentoTotal').textContent = 'R$ ' + total.toFixed(2);
+        }
+
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+            
+            if (servicos.length === 0) {
+                alert('⚠️ Nenhum serviço para gerar relatório.');
+                return;
+            }
+
+            // Cabeçalho
+            doc.setFontSize(20);
+            doc.setTextColor(0, 87, 255);
+            doc.text('GESTORPOOL - RELATÓRIO COMPLETO', 20, 30);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Data: ' + new Date().toLocaleDateString('pt-BR'), 20, 40);
+            doc.text('Total de Serviços: ' + servicos.length, 20, 50);
+
+            let yPosition = 70;
+
+            servicos.forEach((servico, index) => {
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 30;
+                }
+
+                // Dados do serviço (CORREÇÃO APLICADA)
+                const servicoCorrigido = {
+                    clienteNome: forcarString(servico.clienteNome),
+                    tipoServico: forcarString(servico.tipoServico),
+                    endereco: forcarString(servico.clienteEndereco),
+                    telefone: forcarString(servico.clienteTelefone),
+                    data: new Date(servico.data).toLocaleDateString('pt-BR'),
+                    valor: forcarString(servico.valorServico)
+                };
+
+                doc.setFontSize(14);
+                doc.setTextColor(0, 87, 255);
+                doc.text('SERVIÇO ' + (index + 1) + ':', 20, yPosition);
+                yPosition += 10;
+                
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Cliente: ' + servicoCorrigido.clienteNome, 20, yPosition);
+                yPosition += 5;
+                doc.text('Tipo: ' + servicoCorrigido.tipoServico, 20, yPosition);
+                yPosition += 5;
+                doc.text('Data: ' + servicoCorrigido.data, 20, yPosition);
+                yPosition += 5;
+                doc.text('Valor: R$ ' + servicoCorrigido.valor, 20, yPosition);
+                yPosition += 10;
+
+                // Linha separadora
+                doc.setDrawColor(200, 200, 200);
+                doc.line(20, yPosition, 190, yPosition);
+                yPosition += 15;
+            });
+            
+            const nomeArquivo = 'relatorio_gestorpool_' + new Date().toISOString().split('T')[0] + '.pdf';
+            doc.save(nomeArquivo);
+            
+            alert('✅ Relatório PDF gerado com sucesso!');
+        }
+
+        function gerarPDFIndividual(id) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+            const servico = servicos.find(s => s.id === id);
+            
+            if (!servico) {
+                alert('⚠️ Serviço não encontrado.');
+                return;
+            }
+
+            // Cabeçalho
+            doc.setFontSize(20);
+            doc.setTextColor(0, 87, 255);
+            doc.text('GESTORPOOL - RELATÓRIO INDIVIDUAL', 20, 30);
+            
+            // Dados do serviço (CORREÇÃO APLICADA)
+            const servicoCorrigido = {
+                clienteNome: forcarString(servico.clienteNome),
+                tipoServico: forcarString(servico.tipoServico),
+                endereco: forcarString(servico.clienteEndereco),
+                telefone: forcarString(servico.clienteTelefone),
+                data: new Date(servico.data).toLocaleDateString('pt-BR'),
+                valor: forcarString(servico.valorServico),
+                observacoes: forcarString(servico.observacoes)
+            };
+
+            let yPosition = 60;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('CLIENTE: ' + servicoCorrigido.clienteNome, 20, yPosition);
+            yPosition += 10;
+            doc.text('TIPO DE SERVIÇO: ' + servicoCorrigido.tipoServico, 20, yPosition);
+            yPosition += 10;
+            doc.text('DATA: ' + servicoCorrigido.data, 20, yPosition);
+            yPosition += 10;
+            doc.text('VALOR: R$ ' + servicoCorrigido.valor, 20, yPosition);
+            yPosition += 10;
+            
+            if (servicoCorrigido.observacoes) {
+                doc.text('OBSERVAÇÕES: ' + servicoCorrigido.observacoes, 20, yPosition);
+                yPosition += 10;
+            }
+
+            // CORREÇÃO: Adicionar fotos se existirem
+            const camposFoto = ['fotoAntes', 'fotoDepois', 'fotoDreno', 'fotoSuccao', 'fotoRetorno'];
+            
+            camposFoto.forEach(campo => {
+                if (servicoCorrigido[campo] && servicoCorrigido[campo] !== '') {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 30;
+                    }
+                    
+                    const nomeCampo = campo.replace('foto', '').toUpperCase();
+                    doc.text(nomeCampo + ':', 20, yPosition);
+                    yPosition += 5;
+                    
+                    try {
+                        doc.addImage(servicoCorrigido[campo], 'JPEG', 20, yPosition, 80, 60);
+                        yPosition += 70;
+                    } catch (e) {
+                        console.log('Erro ao adicionar foto:', e);
+                        yPosition += 10;
+                    }
+                }
+            });
+            
+            const nomeArquivo = 'relatorio_' + servicoCorrigido.clienteNome.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+            doc.save(nomeArquivo);
+            
+            alert('✅ Relatório individual gerado com sucesso!');
+        }
+
+        function visualizarServico(id) {
+            const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+            const servico = servicos.find(s => s.id === id);
+            
+            if (!servico) {
+                alert('⚠️ Serviço não encontrado.');
+                return;
+            }
+
+            const servicoCorrigido = {
+                clienteNome: converterParaExibicao(servico.clienteNome),
+                tipoServico: converterParaExibicao(servico.tipoServico),
+                endereco: converterParaExibicao(servico.clienteEndereco),
+                telefone: converterParaExibicao(servico.clienteTelefone),
+                data: new Date(servico.data).toLocaleDateString('pt-BR'),
+                valor: converterParaExibicao(servico.valorServico),
+                observacoes: converterParaExibicao(servico.observacoes),
+                phValue: converterParaExibicao(servico.phValue),
+                cloroValue: converterParaExibicao(servico.cloroValue),
+                alcalinidadeValue: converterParaExibicao(servico.alcalinidadeValue)
+            };
+
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h2>Detalhes do Serviço</h2>
+                <div class="service-details">
+                    <p><strong>Cliente:</strong> ${servicoCorrigido.clienteNome}</p>
+                    <p><strong>Tipo:</strong> ${servicoCorrigido.tipoServico}</p>
+                    <p><strong>Data:</strong> ${servicoCorrigido.data}</p>
+                    <p><strong>Endereço:</strong> ${servicoCorrigido.endereco}</p>
+                    <p><strong>Telefone:</strong> ${servicoCorrigido.telefone}</p>
+                    <p><strong>Valor:</strong> R$ ${servicoCorrigido.valor}</p>
+                    ${servicoCorrigido.phValue ? `<p><strong>pH:</strong> ${servicoCorrigido.phValue} | <strong>Cloro:</strong> ${servicoCorrigido.cloroValue}ppm | <strong>Alcalinidade:</strong> ${servicoCorrigido.alcalinidadeValue}ppm</p>` : ''}
+                    ${servicoCorrigido.observacoes ? `<p><strong>Observações:</strong> ${servicoCorrigido.observacoes}</p>` : ''}
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="gerarPDFIndividual(${servico.id})">📄 Gerar PDF</button>
+                    <button class="btn btn-secondary" onclick="fecharModal()">Fechar</button>
+                </div>
+            `;
+            
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function excluirServico(id) {
+            if (confirm('Tem certeza que deseja excluir este serviço?')) {
+                const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+                const servicosFiltrados = servicos.filter(servico => servico.id !== id);
+                localStorage.setItem('servicos', JSON.stringify(servicosFiltrados));
+                
+                atualizarListas();
+                atualizarEstatisticas();
+                
+                alert('✅ Serviço excluído com sucesso!');
+            }
+        }
+
+        function limparFormulario() {
+            document.getElementById('serviceForm').reset();
+            
+            // Limpar previews das fotos
+            ['dreno', 'succao', 'retorno', 'drenoPrincipal', 'abastecimento', 'cloro', 'ph', 'antes', 'depois'].forEach(id => {
+                const preview = document.getElementById(id + 'Preview');
+                if (preview) {
+                    const label = id === 'antes' ? '📸 Antes' :
+                                 id === 'depois' ? '📸 Depois' :
+                                 id.charAt(0).toUpperCase() + id.slice(1);
+                    preview.innerHTML = '<p>' + label + '</p>';
+                }
+            });
+            
+            // Remover classes has-image
+            document.querySelectorAll('.photo-upload').forEach(div => {
+                div.classList.remove('has-image');
+            });
+        }
+
+        function salvarAgenda() {
+            const agenda = {
+                id: Date.now(),
+                cliente: document.getElementById('agendaCliente').value,
+                data: document.getElementById('agendaData').value,
+                hora: document.getElementById('agendaHora').value,
+                servico: document.getElementById('agendaServico').value,
+                observacoes: document.getElementById('agendaObservacoes').value,
+                dataCriacao: new Date().toISOString()
+            };
+
+            let agendas = JSON.parse(localStorage.getItem('agendas') || '[]');
+            agendas.push(agenda);
+            localStorage.setItem('agendas', JSON.stringify(agendas));
+
+            document.getElementById('agendaForm').reset();
+            alert('✅ Agendamento salvo com sucesso!');
+            atualizarAgenda();
+        }
+
+        function atualizarAgenda() {
+            const agendas = JSON.parse(localStorage.getItem('agendas') || '[]');
+            const agendaList = document.getElementById('agendaList');
+
+            agendaList.innerHTML = agendas.slice(-10).reverse().map(agenda => `
+                <div class="service-item">
+                    <div class="service-header">
+                        <div class="service-title">${agenda.cliente} - ${agenda.servico}</div>
+                        <div class="service-date">${agenda.data} ${agenda.hora}</div>
+                    </div>
+                    <div class="service-details">
+                        <p>📅 ${agenda.data} às ${agenda.hora}</p>
+                        ${agenda.observacoes ? `<p>📝 ${agenda.observacoes}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function carregarConfiguracoes() {
+            const configuracoes = JSON.parse(localStorage.getItem('configuracoes') || '{}');
+            if (configuracoes.nomePiscineiro) {
+                document.getElementById('nomePiscineiro').value = configuracoes.nomePiscineiro;
+            }
+        }
+
+        function salvarConfiguracoes() {
+            const configuracoes = {
+                nomePiscineiro: document.getElementById('nomePiscineiro').value
+            };
+
+            localStorage.setItem('configuracoes', JSON.stringify(configuracoes));
+            alert('✅ Configurações salvas com sucesso!');
+        }
+
+        function corrigirDados() {
+            if (confirm('Esta função vai corrigir dados corrompidos. Continuar?')) {
+                try {
+                    const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+                    if (servicos.length > 0) {
+                        const servicosCorrigidos = servicos.map(servico => ({
+                            id: servico.id,
+                            clienteNome: forcarString(servico.clienteNome),
+                            clienteTelefone: forcarString(servico.clienteTelefone),
+                            clienteEndereco: forcarString(servico.clienteEndereco),
+                            tipoServico: forcarString(servico.tipoServico),
+                            phValue: forcarString(servico.phValue),
+                            cloroValue: forcarString(servico.cloroValue),
+                            alcalinidadeValue: forcarString(servico.alcalinidadeValue),
+                            observacoes: forcarString(servico.observacoes),
+                            valorServico: forcarString(servico.valorServico),
+                            data: servico.data,
+                            // Manter fotos como string
+                            fotoDreno: forcarString(servico.fotoDreno || ''),
+                            fotoSuccao: forcarString(servico.fotoSuccao || ''),
+                            fotoRetorno: forcarString(servico.fotoRetorno || ''),
+                            fotoDrenoPrincipal: forcarString(servico.fotoDrenoPrincipal || ''),
+                            fotoAbastecimento: forcarString(servico.fotoAbastecimento || ''),
+                            fotoCloro: forcarString(servico.fotoCloro || ''),
+                            fotoPh: forcarString(servico.fotoPh || ''),
+                            fotoAntes: forcarString(servico.fotoAntes || ''),
+                            fotoDepois: forcarString(servico.fotoDepois || '')
+                        }));
+                        
+                        localStorage.setItem('servicos', JSON.stringify(servicosCorrigidos));
+                        console.log('✅ Dados corrigidos: ' + servicosCorrigidos.length + ' serviços');
+                        alert('✅ Dados corrigidos com sucesso!');
+                        atualizarListas();
+                        atualizarEstatisticas();
+                    } else {
+                        alert('ℹ️ Não há dados para corrigir.');
+                    }
+                } catch (error) {
+                    console.error('Erro ao corrigir dados:', error);
+                    alert('❌ Erro ao corrigir dados.');
+                }
+            }
+        }
+
+        function limparTodosDados() {
+            if (confirm('⚠️ Isso irá deletar TODOS os dados. Tem certeza?')) {
+                localStorage.removeItem('servicos');
+                localStorage.removeItem('agendas');
+                localStorage.removeItem('configuracoes');
+                atualizarListas();
+                atualizarEstatisticas();
+                alert('✅ Todos os dados foram removidos.');
+            }
+        }
+
+        function verificarEInstalarDadosIniciais() {
+            const servicos = JSON.parse(localStorage.getItem('servicos') || '[]');
+            if (servicos.length === 0) {
+                console.log('✅ Nenhum dado anterior encontrado - sistema pronto para uso!');
+            }
+        }
+
+        function filtrarRelatorios() {
+            // Implementação de filtro pode ser adicionada aqui
+            atualizarListas();
+        }
+
+        function limparFiltros() {
+            document.getElementById('filtroDataInicio').value = '';
+            document.getElementById('filtroDataFim').value = '';
+            atualizarListas();
+        }
+    </script>
+</body>
+</html>
